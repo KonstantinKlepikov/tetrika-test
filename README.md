@@ -7,4 +7,3 @@
 ## TODO
 
 - [ ] проект решения
-# tetrika-test
