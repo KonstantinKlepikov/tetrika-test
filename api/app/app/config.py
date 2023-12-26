@@ -15,6 +15,9 @@ class Settings(BaseSettings):
 
     # redis
     REDIS_URL: RedisDsn | None = None
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
+    REDIS_HOST: str | None = 0
 
     # open-api settings
     title: str = poetry_data['name']
@@ -28,6 +31,11 @@ class Settings(BaseSettings):
     ]
 
     # open-api errors
+    ERRORS: ErrorType = {
+        400: {'model': scheme_error.HttpError400},
+        404: {'model': scheme_error.HttpError404},
+        409: {'model': scheme_error.HttpError409},
+            }
 
 
 settings = Settings()

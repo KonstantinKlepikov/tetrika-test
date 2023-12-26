@@ -45,9 +45,9 @@ REDIS_URL=redis://tetrika-redis:6379/0
 
 - [x] project
 - [x] docker stack
-- [ ] integrate with redis
-- [ ] get file endpoint
-- [ ] post file endpoint (filestream)
+- [x] integrate with redis
+- [x] get file endpoint
+- [x] post file endpoint
 - [ ] middlewire
 - [ ] operative id in redis. Add empty result and status
 - [ ] parsing file

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>Send a csv file</h1>
+    <form method="post" action="{{ path }}"  enctype="multipart/form-data">
+        <label for="sendFile">Add csv file here:</label><br><br>
+        <input type="file" id="sendFile" name="file" onchange="enableSubmit();">
+        <input type="submit" id="submitMe" value="Send" disabled>
+    </form>
+    <p id="sentMe" hidden>File sent.</p>
+    <script>
+        function enableSubmit() {
+           document.getElementById('submitMe').removeAttribute("disabled");
+        }
+     </script>
+</body>
+</html>

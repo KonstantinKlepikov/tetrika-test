@@ -26,18 +26,6 @@ class HttpError400(HttpErrorMessage):
             }
 
 
-class HttpError401(HttpErrorMessage):
-    """401 Unauthorized
-    """
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "detail": "User not authorized.",
-            }
-        }
-
-
 class HttpError404(HttpErrorMessage):
     """404 Not Found
     """
