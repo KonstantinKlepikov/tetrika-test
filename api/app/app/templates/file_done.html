@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if done %}
+        <h1>File sent</h1>
+        <p>Operation id is: {{ uuid_id }}</p>
+        <p>Use POST /file/{id} to get result.</p>
+    {% else %}
+        <h1> Wrong file format - required .csv</h1>
+    {% endif %}
+    <input type="button" onclick="location.href='{{ path }}';" value="Back to form" />
+{% endblock content %}

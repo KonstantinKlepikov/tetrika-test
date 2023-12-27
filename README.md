@@ -40,6 +40,7 @@ REDIS_URL=redis://tetrika-redis:6379/0
 ### Ссылки на локальные ресурсы, которые вы можете использовать для контроля работоспособности стека
 
 - [api swagger docs](http://localhost:8301/docs/)
+- [form](http://localhost:8301/api/v1/file)
 
 ### Общее затраченное время и выполненные задачи
 
@@ -48,14 +49,13 @@ REDIS_URL=redis://tetrika-redis:6379/0
 - [x] integrate with redis
 - [x] get file endpoint
 - [x] post file endpoint
-- [ ] middlewire
+- [x] stream and check file type
+- [ ] background task
 - [ ] operative id in redis. Add empty result and status
 - [ ] parsing file
 - [ ] validate file (schema)
 - [ ] update result and status
 - [ ] aiohttp requests with sem. Updtae result
-- [ ] update status
-- [ ] get ready endpoint
 - [ ] get result endpoint
 - [ ] errors
 - [ ] tests

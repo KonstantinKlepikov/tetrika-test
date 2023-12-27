@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+
+  tetrika-redis:
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - dev-tetrika-network
+
+  test-tetrika-redis:
+    image: bitnami/redis:latest
+    container_name: test-tetrika-redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - dev-tetrika-network
+
+  tetrika-api:
+    networks:
+      - dev-tetrika-network
+
+networks:
+  dev-tetrika-network:

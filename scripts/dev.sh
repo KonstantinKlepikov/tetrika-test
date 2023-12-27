@@ -6,6 +6,7 @@ set -e
 INSTALL_DEV=true \
 docker compose \
 -f docker-compose.yml \
+-f docker-compose.dev.yml \
 config > docker-stack.yml
 
 docker compose -f docker-stack.yml build

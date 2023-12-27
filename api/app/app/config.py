@@ -1,6 +1,5 @@
 import toml
 from typing import Type
-from pydantic import RedisDsn
 from pydantic_settings import BaseSettings
 from app.schemas import scheme_error
 
@@ -14,10 +13,9 @@ class Settings(BaseSettings):
     API_V1: str = "/api/v1"
 
     # redis
-    REDIS_URL: RedisDsn | None = None
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
-    REDIS_HOST: str | None = 0
+    REDIS_HOST: str | None = None
 
     # open-api settings
     title: str = poetry_data['name']

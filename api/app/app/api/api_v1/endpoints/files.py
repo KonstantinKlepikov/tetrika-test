@@ -1,14 +1,22 @@
-from typing import Annotated
-from fastapi import APIRouter, status, Form, UploadFile, Request
-from fastapi.responses import RedirectResponse
+import uuid
+from redis.asyncio import Redis
+from fastapi import (
+    APIRouter,
+    status,
+    Request,
+    BackgroundTasks,
+    Depends,
+        )
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from app.core.uploades import upload_file, make_resources
+from app.schemas.constraint import MultipartType
+from app.db.init_redis import get_redis_connection
 from app.config import settings
 
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
-path_to_file = settings.API_V1+'/file'
 
 
 @router.get(
@@ -23,26 +31,45 @@ async def get_form(request: Request) -> HTMLResponse:
     """
     return templates.TemplateResponse(
         "form_page.html",
-        {"request": request, "path": path_to_file}
+        {"request": request, "path": settings.API_V1+'/file'}
             )
 
 
 @router.post(
     '/file',
-    status_code=status.HTTP_303_SEE_OTHER,
+    status_code=status.HTTP_201_CREATED,
     summary='Receive one file',
     responses=settings.ERRORS,
         )
 async def get_file(
     request: Request,
-    file: Annotated[UploadFile, Form()]
-        ) -> RedirectResponse:
+    background_tasks: BackgroundTasks,
+    redis_db: Redis = Depends(get_redis_connection),
+        ) -> HTMLResponse:
     """Receive one file
     """
-    # aiofile async gen here
+    # upload files
+    data = await upload_file(request)
+    resp = {
+        "request": request,
+        "path": settings.API_V1+'/file',
+        "uuid_id": (uuid_id := str(uuid.uuid4())),
+        'done': False if data.multipart_content_type \
+                != MultipartType.CSV else True,
+            }
 
-    url = request.url_for('get_form')
-    return RedirectResponse(
-        url,
-        status_code=status.HTTP_303_SEE_OTHER
+    # add to redis id
+
+
+    # parse data
+    background_tasks.add_task(
+        make_resources,
+        data.value,
+        redis_db,
+        uuid_id
+            )
+
+    return templates.TemplateResponse(
+        "file_done.html",
+        resp, status_code=201
             )

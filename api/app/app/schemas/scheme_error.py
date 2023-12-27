@@ -21,7 +21,7 @@ class HttpError400(HttpErrorMessage):
     class Config:
         json_schema_extra = {
             "example": {
-                "detail": "Wrong login or password.",
+                "detail": "Wrong file or problems with connection.",
                 }
             }
 

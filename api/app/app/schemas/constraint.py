@@ -20,3 +20,9 @@ class BaseEnum(Enum):
 class BaseStrEnum(str, BaseEnum):
     """Base class for enumeration
     """
+
+
+class MultipartType:
+    """Multipart types for upload
+    """
+    CSV = 'text/csv'

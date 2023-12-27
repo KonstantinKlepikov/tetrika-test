@@ -5,12 +5,8 @@ services:
   tetrika-redis:
     image: bitnami/redis:latest
     container_name: tetrika-redis
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - tetrika-redis-data:/bitnami/redis/data
-    networks:
-      - tetrika-network
 
   tetrika-api:
     image: tetrika-api
@@ -22,14 +18,12 @@ services:
     build:
       context: ./api
       dockerfile: api.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-true}
     volumes:
       - ./api/app:/app
-    networks:
-      - tetrika-network
 
 volumes:
   tetrika-redis-data:
     driver: local
 
-networks:
-  tetrika-network:
