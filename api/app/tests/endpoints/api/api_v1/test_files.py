@@ -1,16 +1,11 @@
 import pytest
 import uuid
-import random
 from redis.asyncio import Redis
 from typing import Callable
 from httpx import AsyncClient
 from app.config import settings
 from app.core import uploades
-
-
-rnd = random.Random()
-rnd.seed(123)
-UUID_ID = uuid.UUID(int=rnd.getrandbits(128), version=4)
+from tests.conftest import UUID_ID
 
 
 class TestGetFile:

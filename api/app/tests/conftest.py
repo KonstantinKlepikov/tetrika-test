@@ -1,9 +1,16 @@
 import pytest
+import uuid
+import random
 from typing import Generator
 from pydantic_settings import BaseSettings
 from httpx import AsyncClient
 from app.main import app
 from app.db.init_redis import RedisConnection
+
+
+rnd = random.Random()
+rnd.seed(123)
+UUID_ID = uuid.UUID(int=rnd.getrandbits(128), version=4)
 
 
 class TestSettings(BaseSettings):

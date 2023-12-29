@@ -17,6 +17,11 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_HOST: str | None = None
 
+    # aiohhtp client
+    SIZE_POOL_HTTP: int = 100
+    TIMEOUT_AIOHTTP: int = 2
+    QUERY_SLEEP: float = 0.05
+
     # open-api settings
     title: str = poetry_data['name']
     descriprion: str = poetry_data['description']

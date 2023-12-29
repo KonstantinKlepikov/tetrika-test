@@ -22,7 +22,15 @@ class BaseStrEnum(str, BaseEnum):
     """
 
 
-class MultipartType:
+class MultipartType(BaseEnum):
     """Multipart types for upload
     """
     CSV = 'text/csv'
+
+
+class ProcessingResult(BaseEnum):
+    """Results of processing
+    """
+    PROCESS = 'process'
+    ERROR = 'error'
+    DONE = 'done'

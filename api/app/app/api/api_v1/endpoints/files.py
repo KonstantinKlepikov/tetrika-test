@@ -55,16 +55,16 @@ async def get_file(
         "path": settings.API_V1+'/file',
         "uuid_id": (uuid_id := str(uuid.uuid4())),
         'done': False if data.multipart_content_type \
-                != MultipartType.CSV else True,
+                != MultipartType.CSV.value else True,
             }
 
     # add to redis id
 
 
-    # parse data
+    # process data
     background_tasks.add_task(
         make_resources,
-        data.value,
+        data.value.decode("utf-8") ,
         redis_db,
         uuid_id
             )
