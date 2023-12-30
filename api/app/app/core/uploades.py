@@ -32,27 +32,17 @@ async def upload_file(request: Request) -> ValueTarget:
 def parse_data(
     data: str,
     uuid_id: uuid.UUID
-        ) -> tuple[scheme_data.DataOut, list[scheme_data.UserIn]]:
+        ) -> tuple[dict[str, int], list[scheme_data.UserIn]]:
 
-    done = {'uuid_id': uuid_id, 'data_in': 0,'errors': 0, }
+    done = {'data_in': 0,'errors': 0, }
     to_process = []
 
     reader = csv.DictReader(data.splitlines())
     for row in reader:
         try:
-            to_process.append(scheme_data.UserIn(**row))
+            to_process.append(scheme_data.UserIn(**row)) # TODO: ditectly to queue
         except ValidationError:
             done['errors'] += 1
         done['data_in'] += 1
 
-    return scheme_data.DataOut(**done), to_process # TODO: to_process add ditectly ro queue
-
-
-async def make_resources(
-    data: str,
-    redis_db: Redis,
-    uuid_id: str
-        ) -> None:
-    """Make resources from file
-    # TODO: test me
-    """
+    return done, to_process # TODO: remove to_process

@@ -1,12 +1,5 @@
-import uuid
-import random
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel, Field
 from app.schemas.constraint import ProcessingResult
-
-
-rnd = random.Random()
-rnd.seed(123)
-UUID_ID = uuid.UUID(int=rnd.getrandbits(128), version=4)
 
 
 class UserId(BaseModel):
@@ -43,10 +36,13 @@ class UserIn(UserId):
 class Status(BaseModel):
     """Status of data processing
     """
-    result: ProcessingResult = ProcessingResult.PROCESS
+    result: ProcessingResult = Field(
+        default=ProcessingResult.PROCESS, validate_default=True
+            )
 
     class Config:
 
+        use_enum_values = True
         json_schema_extra = {
             "example": {
                 'result': 'inProcess',
@@ -86,17 +82,18 @@ class UserOut(UserId, Status, Post):
 class Data(BaseModel):
     """All data status
     """
-    uuid_id: UUID4
     data_in: int = 0
     data_out: int = 0
     errors: int = 0
-    result: ProcessingResult = ProcessingResult.PROCESS
+    result: ProcessingResult = Field(
+        default=ProcessingResult.PROCESS, validate_default=True
+            )
 
     class Config:
 
+        use_enum_values = True
         json_schema_extra = {
             "example": {
-                'uuid_id': UUID_ID,
                 'data_in': 12,
                 'data_out': 0,
                 'errors': 0,
@@ -108,19 +105,17 @@ class Data(BaseModel):
 class DataOut(Data):
     """All data
     """
-    data: dict[int, UserOut] = {}
 
     class Config:
 
+        use_enum_values = True
+        extra = 'allow'
         json_schema_extra = {
             "example": {
-                'uuid_id': UUID_ID,
                 'data_in': 12,
-                'data_out': 0,
+                'data_out': 1,
                 'errors': 1,
                 'result': 'progress',
-                'data': {
-                    1: {'userId': 1, 'result': 'error', 'postId': None,},
-                        }
+                1: '',
                     }
                 }

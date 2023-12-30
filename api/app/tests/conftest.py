@@ -13,6 +13,10 @@ rnd.seed(123)
 UUID_ID = uuid.UUID(int=rnd.getrandbits(128), version=4)
 
 
+async def override_uuid_id():
+    return UUID_ID
+
+
 class TestSettings(BaseSettings):
     """Test settings"""
     TEST_REDIS_PORT: int = 6379
@@ -27,8 +31,10 @@ test_settings = TestSettings()
 async def client() -> Generator:
     """Get api client
     """
+    app.dependency_overrides[uuid.uuid4] = override_uuid_id
     async with AsyncClient(app=app, base_url="http://test") as c:
         yield c
+    app.dependency_overrides = {}
 
 
 @pytest.fixture(scope="function")

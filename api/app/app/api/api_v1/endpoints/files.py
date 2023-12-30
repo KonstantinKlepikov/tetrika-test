@@ -9,8 +9,10 @@ from fastapi import (
         )
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from app.core.uploades import upload_file, make_resources
+from app.core.uploades import upload_file, parse_data
 from app.schemas.constraint import MultipartType
+from app.schemas import scheme_data
+from app.crud.redis_crud_base import crud_data
 from app.db.init_redis import get_redis_connection
 from app.config import settings
 
@@ -43,8 +45,8 @@ async def get_form(request: Request) -> HTMLResponse:
         )
 async def get_file(
     request: Request,
-    background_tasks: BackgroundTasks,
     redis_db: Redis = Depends(get_redis_connection),
+    uuid_id: uuid.UUID = Depends(uuid.uuid4),
         ) -> HTMLResponse:
     """Receive one file
     """
@@ -53,23 +55,20 @@ async def get_file(
     resp = {
         "request": request,
         "path": settings.API_V1+'/file',
-        "uuid_id": (uuid_id := str(uuid.uuid4())),
+        "uuid_id": str(uuid_id),
         'done': False if data.multipart_content_type \
                 != MultipartType.CSV.value else True,
             }
 
     # add to redis id
+    await crud_data.create(uuid_id, redis_db, scheme_data.Data())
 
-
-    # process data
-    background_tasks.add_task(
-        make_resources,
-        data.value.decode("utf-8") ,
-        redis_db,
-        uuid_id
-            )
+    # parse data
+    done, to_process = parse_data(data.value.decode("utf-8"), uuid_id)
+    await crud_data.update_fields(uuid_id, redis_db, done)
 
     return templates.TemplateResponse(
         "file_done.html",
-        resp, status_code=201
+        resp,
+        status_code=201
             )

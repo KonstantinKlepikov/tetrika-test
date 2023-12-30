@@ -21,21 +21,6 @@ class TestGetFile:
         response = await client.get(f"{settings.API_V1}/file")
         assert response.status_code == 200, f'{response.content=}'
 
-class TestPostFile:
-    """Test get file
-    """
-    @pytest.fixture(scope="function")
-    async def mock_make_resources(
-        self,
-        monkeypatch,
-            ) -> None:
-        """Mock make resources
-        """
-        async def mock_return(*args, **kwargs) -> Callable:
-            return None # TODO:
-
-        monkeypatch.setattr(uploades, "make_resources", mock_return)
-
     @pytest.fixture(scope="function")
     async def mock_upload_file(
         self,
@@ -44,18 +29,6 @@ class TestPostFile:
         """Mock upload file
         """
         # TODO:
-
-    @pytest.fixture(scope="function")
-    def mock_uuid(
-        self,
-        monkeypatch,
-            ) -> None:
-        """Mock uuid
-        """
-        def mock_return(*args, **kwargs) -> Callable:
-            return UUID_ID
-
-        monkeypatch.setattr(uuid, "uuid4", mock_return)
 
     @pytest.fixture(scope="function")
     def csv_file(self, tmp_path) -> bytes:
@@ -69,8 +42,6 @@ class TestPostFile:
         self,
         client: AsyncClient,
         csv_file: bytes,
-        mock_uuid: Callable,
-        mock_make_resources: Callable,
             ) -> None:
         """Test post file returns 201
         """
@@ -88,8 +59,6 @@ class TestPostFile:
         self,
         client: AsyncClient,
         csv_file: bytes,
-        mock_uuid: Callable,
-        mock_make_resources: Callable,
             ) -> None:
         """Test post file return some txt if wrong csv
         """
