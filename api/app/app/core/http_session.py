@@ -1,4 +1,6 @@
-from asyncio import Semaphore, sleep, Queue
+import asyncio
+from asyncio import Semaphore, Queue, Task
+from datetime import datetime
 from typing import Any
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from fastapi import HTTPException
@@ -10,6 +12,9 @@ class SessionMaker:
     """
     aiohttp_client: ClientSession | None = None
     queue: Queue = Queue()
+    sem: Semaphore = Semaphore(settings.SEMAPHORE)
+    dt_start: datetime | None = None
+    workers: list[Task] | None = None
 
     @classmethod
     def get_aiohttp_client(cls) -> ClientSession:
@@ -68,41 +73,46 @@ class SessionMaker:
                         )
             return await response.json()
 
-    @classmethod
-    async def get_query(
-        cls,
-        url: str,
-        params: dict[str, Any] | None = None,
-        sem: Semaphore | None = None,
-            ) -> dict[str, Any]:
-        """Query given url
 
-        Args:
-            url (str): url for request
-            params (dict[str, Any], optional): request parameters.
-                Defaults to None.
-            sem (Semaphore, optional): query constaraint.
-                Defaults to None.
+    async def worker(self) -> None:
+        """Work with querie"""
 
-        Returns:
-            dict[str, Any]: result
+        while True:
+
+            job = await self.queue.get()
+
+            async with self.sem:
+
+                if self.sem._value == settings.SEMAPHORE+1:
+                    self.dt_start = datetime.utcnow()
+
+                if self.sem._value == 0:
+                    timeout = 1 - (datetime.utcnow() - self.dt_start).total_seconds()
+                    if timeout > 0:
+                        await asyncio.sleep(timeout)
+                        if self.sem.locked():
+                            self.sem.release()
+
+            await job()
+            self.queue.task_done()
+
+
+    async def run_workers(self) -> None:
+        """Run workers
         """
-        client = cls.get_aiohttp_client()
+        self.get_aiohttp_client()
+        self.workers = [
+            asyncio.create_task(self.worker())
+            for _
+            in range(settings.WORKERS)
+                ]
+        asyncio.wait(*self.workers)
 
-        if sem:
-            async with sem:
 
-                result = await cls._get(
-                    client=client,
-                    url=url,
-                    params=params,
-                        )
-                await sleep(settings.QUERY_SLEEP)
-        else:
-            result = await cls._get(
-                client=client,
-                url=url,
-                params=params
-                    )
-
-        return result
+    # async def stop_workers(self) -> None:
+    #     """Stop workers
+    #     """
+    #     await self.queue.join()
+    #     for worker in self.workers:
+    #         worker.cancel()
+    #     await self.close_aiohttp_client()

@@ -20,7 +20,8 @@ class Settings(BaseSettings):
     # aiohhtp client
     SIZE_POOL_HTTP: int = 100
     TIMEOUT_AIOHTTP: int = 2
-    QUERY_SLEEP: float = 0.05
+    SEMAPHORE: int = 7
+    WORKERS: int = 7
 
     # open-api settings
     title: str = poetry_data['name']
