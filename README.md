@@ -50,9 +50,8 @@ REDIS_URL=redis://tetrika-redis:6379/0
 - [x] get file endpoint
 - [x] post file endpoint
 - [x] stream and check file type
-- [ ] background task
-- [ ] operative id in redis. Add empty result and status
-- [ ] parsing file
+- [x] operative id in redis. Add empty result and status
+- [x] parsing file
 - [ ] validate file (schema)
 - [ ] update result and status
 - [ ] aiohttp requests with sem. Updtae result
