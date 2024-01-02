@@ -1,6 +1,5 @@
 import csv
 import uuid
-import asyncio
 from redis.asyncio import Redis
 from streaming_form_data import StreamingFormDataParser
 from streaming_form_data.targets import ValueTarget
@@ -9,7 +8,6 @@ from pydantic import ValidationError
 from fastapi import Request, HTTPException
 from app.schemas import scheme_data
 from app.schemas.constraint import ProcessingResult
-from app.core.workers import workers
 from app.config import settings
 
 
@@ -32,17 +30,6 @@ async def upload_file(request: Request) -> ValueTarget:
     return data
 
 
-async def run_workers() -> None:
-    """Run workers
-    """
-    tasks = [
-        asyncio.create_task(workers.worker())
-        for _
-        in range(settings.WORKERS)
-                ]
-    await asyncio.wait(tasks)
-
-
 def parse_data(
     data: str,
     uuid_id: uuid.UUID
@@ -54,9 +41,9 @@ def parse_data(
     reader = csv.DictReader(data.splitlines())
     for row in reader:
         try:
-            to_process.append(scheme_data.UserIn(**row)) # TODO: ditectly to queue
+            to_process.append(scheme_data.UserIn(**row)) # TODO: make coro
         except ValidationError:
             done['errors'] += 1
         done['data_in'] += 1
 
-    return done, to_process # TODO: remove to_process
+    return done, to_process

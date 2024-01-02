@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.core.uploades import run_workers
+# from app.core.workers import workers
 from app.api.api_v1.api import api_router
 
 
@@ -12,7 +12,7 @@ app = FastAPI(
     version=settings.version,
     openapi_tags=settings.openapi_tags,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
-    on_startup=[run_workers],
+    # lifespan=workers.run_workers
         )
 
 

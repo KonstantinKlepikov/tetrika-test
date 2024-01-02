@@ -24,7 +24,6 @@ class SessionMaker:
             cls.aiohttp_client = ClientSession(
                 timeout=timeout,
                 connector=connector,
-                # headers=headers,
                     )
 
         return cls.aiohttp_client
@@ -38,18 +37,16 @@ class SessionMaker:
             cls.aiohttp_client = None
 
     @classmethod
-    async def _get(
-        cls,
-        client: ClientSession,
+    async def post(
+        self,
         url: str,
-        params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
             ) -> dict[str, Any]:
         """Request and get responses
 
         Args:
-            client (ClientSession): session
             url (str): url for request
-            params (dict[str, Any], optional): request parameters.
+            data (dict[str, Any], optional): request body.
                 Defaults to None.
 
         Raises:
@@ -58,7 +55,8 @@ class SessionMaker:
         Returns:
             dict[str, Any]: response
         """
-        async with client.get(url, params=params) as response:
+        client = self.get_aiohttp_client()
+        async with client.post(url, data=data) as response:
             if response.status == 429:
                 raise HTTPException(
                     status_code=429,

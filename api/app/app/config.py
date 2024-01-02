@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     SIZE_POOL_HTTP: int = 100
     TIMEOUT_AIOHTTP: int = 2
     SEMAPHORE: int = 7
-    WORKERS: int = 7
+    # WORKERS: int = 7
 
     # open-api settings
     title: str = poetry_data['name']
