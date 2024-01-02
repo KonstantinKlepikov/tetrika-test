@@ -70,6 +70,7 @@ class UserOut(UserId, Status, Post):
 
     class Config:
 
+        use_enum_values = True
         json_schema_extra = {
             "example": {
                 'userId': 1,

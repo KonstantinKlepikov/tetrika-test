@@ -9,12 +9,12 @@ from fastapi import (
         )
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from app.core.uploades import upload_file, parse_data
+from app.core.uploades import upload_file
 from app.schemas.constraint import MultipartType
-from app.schemas import scheme_data
-from app.crud.redis_crud_base import crud_data
+# from app.schemas import scheme_data
+# from app.crud.redis_crud_base import crud_data
 from app.db.init_redis import get_redis_connection
-from app.core.http_session import SessionMaker
+# from app.core.http_session import SessionMaker
 from app.core.workers import Worker
 from app.config import settings
 
@@ -66,19 +66,9 @@ async def get_file(
                 != MultipartType.CSV.value else True,
             }
 
-    # add to redis id
-    await crud_data.create(uuid_id, redis_db, scheme_data.Data())
-
-    # parse data
-    done, to_process = parse_data(data.value.decode("utf-8"), uuid_id)
-    del data
-
-    await crud_data.update_fields(uuid_id, redis_db, done)
-
-    # query
-    tasks = [s for _ in to_process]
-    worker = Worker(tasks)
-    await worker.run_workers()
+    # work
+    worker = Worker(uuid_id, redis_db, data.value.decode("utf-8"))
+    await worker.run_work()
 
     # return result
     return templates.TemplateResponse(

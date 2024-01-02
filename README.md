@@ -52,10 +52,14 @@ REDIS_URL=redis://tetrika-redis:6379/0
 - [x] stream and check file type
 - [x] operative id in redis. Add empty result and status
 - [x] parsing file
-- [ ] validate file (schema)
-- [ ] update result and status
-- [ ] aiohttp requests with sem. Updtae result
+- [x] validate file (schema)
+- [x] update result and status
+- [x] aiohttp requests with sem. Updtae result
+- [ ] time it (to fast 1.427114725112915)
+- [ ] refactoring
+- [ ] chek result endpoint
 - [ ] get result endpoint
+- [ ] front
 - [ ] errors
 - [ ] tests
 - [ ] docs

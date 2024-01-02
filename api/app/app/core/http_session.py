@@ -1,6 +1,6 @@
 from typing import Any
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
-from fastapi import HTTPException
+from app.schemas.scheme_data import UserIn
 from app.config import settings
 
 
@@ -38,15 +38,15 @@ class SessionMaker:
 
     @classmethod
     async def post(
-        self,
+        cls,
         url: str,
-        data: dict[str, Any] | None = None,
+        data: UserIn | None = None,
             ) -> dict[str, Any]:
         """Request and get responses
 
         Args:
             url (str): url for request
-            data (dict[str, Any], optional): request body.
+            data (UserIn, optional): request body.
                 Defaults to None.
 
         Raises:
@@ -55,11 +55,10 @@ class SessionMaker:
         Returns:
             dict[str, Any]: response
         """
-        client = self.get_aiohttp_client()
+        client = cls.get_aiohttp_client()
+        if data:
+            data = data.model_dump()
         async with client.post(url, data=data) as response:
             if response.status == 429:
-                raise HTTPException(
-                    status_code=429,
-                    detail="To Many Requests"
-                        )
+                raise ConnectionRefusedError
             return await response.json()

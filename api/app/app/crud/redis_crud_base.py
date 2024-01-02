@@ -3,7 +3,7 @@ import asyncio
 from typing import TypeVar, Generic, Type
 from pydantic import BaseModel
 from redis.asyncio import Redis
-from app.schemas import scheme_data
+from app.schemas.scheme_data import UserOut, Data, DataOut
 
 
 SchemaDbType = TypeVar("SchemaDbType", bound=BaseModel)
@@ -57,7 +57,7 @@ class CRUDBase(Generic[SchemaDbType]):
         await db.delete(str(uuid_id))
 
 
-class CRUDData(CRUDBase[scheme_data.Data]):
+class CRUDData(CRUDBase[Data]):
     """CRUDData
     """
 
@@ -67,7 +67,7 @@ class CRUDData(CRUDBase[scheme_data.Data]):
         db: Redis,
         fields: dict[str, int]
             ) -> None:
-        """Incremental update one field
+        """Incremental update many fields
 
         Args:
             uuid_id (UUID): uuid id
@@ -80,5 +80,20 @@ class CRUDData(CRUDBase[scheme_data.Data]):
             pipe.hincrby(u, k, v)
         await pipe.execute()
 
+    async def set_field(
+        self,
+        uuid_id: uuid.UUID,
+        db: Redis,
+        field: UserOut
+            ) -> None:
+        """_summary_
 
-crud_data = CRUDData(schema=scheme_data.DataOut)
+        Args:
+            uuid_id (uuid.UUID): _description_
+            db (Redis): _description_
+            field (UserOut): _description_
+        """
+        await db.hset(uuid_id, field.userId, field.model_dump_json())
+
+
+crud_data = CRUDData(schema=DataOut)
