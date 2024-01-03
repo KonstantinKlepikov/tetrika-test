@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y git curl && \
 
 COPY ./app /app
 COPY ./api-start.sh /api-start.sh
+COPY ./log.ini /log.ini
 WORKDIR /app
 ENV PYTHONPATH=/app
 

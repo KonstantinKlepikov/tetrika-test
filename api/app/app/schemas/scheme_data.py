@@ -32,41 +32,13 @@ class UserIn(UserId):
                     }
                 }
 
-
-class Status(BaseModel):
-    """Status of data processing
+class UserOut(UserId):
+    """Processed user
     """
     result: ProcessingResult = Field(
         default=ProcessingResult.PROCESS, validate_default=True
             )
-
-    class Config:
-
-        use_enum_values = True
-        json_schema_extra = {
-            "example": {
-                'result': 'inProcess',
-                    }
-                }
-
-
-class Post(BaseModel):
-    """Created placeholder resource
-    """
     postId: int | None = None
-
-    class Config:
-
-        json_schema_extra = {
-            "example": {
-                'postId': 225,
-                    }
-                }
-
-
-class UserOut(UserId, Status, Post):
-    """Processed user
-    """
 
     class Config:
 

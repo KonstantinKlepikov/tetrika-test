@@ -1,5 +1,4 @@
 import uuid
-import asyncio
 from typing import TypeVar, Generic, Type
 from pydantic import BaseModel
 from redis.asyncio import Redis

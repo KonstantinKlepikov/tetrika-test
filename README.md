@@ -57,7 +57,7 @@ REDIS_URL=redis://tetrika-redis:6379/0
 - [x] aiohttp requests with sem. Updtae result
 - [ ] time it (to fast 1.427114725112915)
 - [ ] refactoring
-- [ ] chek result endpoint
+- [ ] check result endpoint
 - [ ] get result endpoint
 - [ ] front
 - [ ] errors

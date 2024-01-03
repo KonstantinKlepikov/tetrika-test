@@ -1,5 +1,4 @@
 import uuid
-import asyncio
 from redis.asyncio import Redis
 from fastapi import (
     APIRouter,
@@ -11,10 +10,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from app.core.uploades import upload_file
 from app.schemas.constraint import MultipartType
-# from app.schemas import scheme_data
-# from app.crud.redis_crud_base import crud_data
 from app.db.init_redis import get_redis_connection
-# from app.core.http_session import SessionMaker
 from app.core.workers import Worker
 from app.config import settings
 
@@ -38,10 +34,6 @@ async def get_form(request: Request) -> HTMLResponse:
         {"request": request, "path": settings.API_V1+'/file'}
             )
 
-import random
-
-async def s():
-    await asyncio.sleep(random.randint(0, 4)/10)
 
 @router.post(
     '/file',
