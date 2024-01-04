@@ -1,13 +1,16 @@
 from typing import Any
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from app.schemas.scheme_data import UserIn
+from app.util.blocker import Blocker
 from app.config import settings
 
 
 class SessionMaker:
-    """This class represents aiohttp client session singleton pattern
+    """Aiohttp client
+    # TODO: test me
     """
     aiohttp_client: ClientSession | None = None
+    blocker: Blocker = Blocker()
 
     @classmethod
     def get_aiohttp_client(cls) -> ClientSession:
@@ -37,10 +40,11 @@ class SessionMaker:
             cls.aiohttp_client = None
 
     @classmethod
+    @blocker
     async def post(
         cls,
         url: str,
-        data: UserIn | None = None,
+        data: UserIn | None = None
             ) -> dict[str, Any]:
         """Request and get responses
 
@@ -48,9 +52,6 @@ class SessionMaker:
             url (str): url for request
             data (UserIn, optional): request body.
                 Defaults to None.
-
-        Raises:
-            HTTPException: response code depended exceptions
 
         Returns:
             dict[str, Any]: response

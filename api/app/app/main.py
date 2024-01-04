@@ -1,28 +1,7 @@
-# import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.api.api_v1.api import api_router
-
-
-# from logging import FileHandler, DEBUG
-
-# log = logging.getLogger('uvicorn')
-
-
-# class DebugFileHandler(FileHandler):
-#     def __init__(self, filename, mode='a', encoding=None, delay=False)
-#         super().__init__(filename, mode, encoding, delay)
-
-#     def emit(self, record):
-#         if not record.levelno == DEBUG:
-#             return
-#         super().emit(record)
-
-# log.addHandler(DebugFileHandler())
-
-# loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
-# print(loggers)
 
 
 app = FastAPI(

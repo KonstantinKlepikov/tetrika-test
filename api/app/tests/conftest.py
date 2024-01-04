@@ -38,7 +38,7 @@ async def client() -> Generator:
 
 
 @pytest.fixture(scope="function")
-async def redis_db() -> Generator:
+async def db() -> Generator:
     """Get redis client
     """
     async with RedisConnection(

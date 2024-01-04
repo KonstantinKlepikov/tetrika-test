@@ -14,7 +14,9 @@ async def upload_file(request: Request) -> ValueTarget:
         parser.register('file', data)
         async for chunk in request.stream():
             parser.data_received(chunk)
+
     except ClientDisconnect:
+
         raise HTTPException(
             status_code=400,
             detail='Client dicsonnected.'

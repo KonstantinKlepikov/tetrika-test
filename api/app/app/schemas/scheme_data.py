@@ -52,7 +52,7 @@ class UserOut(UserId):
                 }
 
 
-class Data(BaseModel):
+class UsersStatus(BaseModel):
     """All data status
     """
     data_in: int = 0
@@ -75,8 +75,8 @@ class Data(BaseModel):
                 }
 
 
-class DataOut(Data):
-    """All data
+class UsersOut(UsersStatus):
+    """All data processed
     """
 
     class Config:

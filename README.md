@@ -55,8 +55,8 @@ REDIS_URL=redis://tetrika-redis:6379/0
 - [x] validate file (schema)
 - [x] update result and status
 - [x] aiohttp requests with sem. Updtae result
-- [ ] time it (to fast 1.427114725112915)
-- [ ] refactoring
+- [x] time it (to fast 1.427114725112915)
+- [x] refactoring
 - [ ] check result endpoint
 - [ ] get result endpoint
 - [ ] front

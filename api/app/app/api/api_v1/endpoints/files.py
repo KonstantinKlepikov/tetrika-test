@@ -43,7 +43,7 @@ async def get_form(request: Request) -> HTMLResponse:
         )
 async def get_file(
     request: Request,
-    redis_db: Redis = Depends(get_redis_connection),
+    db: Redis = Depends(get_redis_connection),
     uuid_id: uuid.UUID = Depends(uuid.uuid4),
         ) -> HTMLResponse:
     """Receive one file
@@ -59,8 +59,8 @@ async def get_file(
             }
 
     # work
-    worker = Worker(uuid_id, redis_db, data.value.decode("utf-8"))
-    await worker.run_work()
+    worker = Worker(uuid_id, db, data.value.decode("utf-8"))
+    await worker.run()
 
     # return result
     return templates.TemplateResponse(
