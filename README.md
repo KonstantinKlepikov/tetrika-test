@@ -58,7 +58,7 @@ REDIS_URL=redis://tetrika-redis:6379/0
 - [x] time it (to fast 1.427114725112915)
 - [x] refactoring
 - [x] check result endpoint
-- [x] ~~get result endpoint~~
+- [x] get result endpoint
 - [x] front
 - [x] errors
 - [ ] tests
