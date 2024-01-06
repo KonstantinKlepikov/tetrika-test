@@ -1,0 +1,8 @@
+<p>Strings of data: {{ data_in }}</p>
+<p>Ready: {{ data_out }}</p>
+<p>Errors: {{ errors }}</p>
+<p>Result: {{ result }}</p>
+{% if result == 'done' %}
+<h2>Get result.</h2>
+<button onclick="downloadFile()">Download a result json.</button>
+{% endif %}

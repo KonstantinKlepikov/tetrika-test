@@ -7,7 +7,6 @@ from app.config import settings
 
 class SessionMaker:
     """Aiohttp client
-    # TODO: test me
     """
     aiohttp_client: ClientSession | None = None
     blocker: Blocker = Blocker()
@@ -55,6 +54,7 @@ class SessionMaker:
 
         Returns:
             dict[str, Any]: response
+        # TODO: test me
         """
         client = cls.get_aiohttp_client()
         if data:

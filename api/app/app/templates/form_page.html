@@ -1,13 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-    <form method="post" action="{{ path }}"  enctype="multipart/form-data">
-        <label for="sendFile">Send a csv file</label><br><br>
-        <input type="file" id="sendFile" name="file" onchange="enableSubmit();">
-        <input type="submit" id="submitMe" value="Send" disabled>
-    </form>
-    <script>
-        function enableSubmit() {
-           document.getElementById('submitMe').removeAttribute("disabled");
-        }
-     </script>
+<form id="myForm">
+    <label for="sendFile">Send a csv file</label><br><br>
+    <input type="file" id="sendFile" name="file" onchange="enableSubmit();">
+    <input type="submit" id="submitMe" value="Send" disabled>
+</form>
+<div id="formResponse"></div>
 {% endblock content %}

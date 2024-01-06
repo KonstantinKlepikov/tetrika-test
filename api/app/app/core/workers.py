@@ -6,7 +6,7 @@ from pydantic import ValidationError
 from fastapi.logger import logger as fastapi_logger
 from app.core.http_session import SessionMaker
 from app.crud.redis_crud_base import crud_data
-from app.schemas.scheme_data import UserIn, UserOut
+from app.schemas.scheme_data import UserIn, UserOut, UsersStatus
 from app.schemas.constraint import ProcessingResult
 from app.util.timer import timer
 from app.config import settings
@@ -14,7 +14,6 @@ from app.config import settings
 
 class Worker:
     """Worker for parsing data
-    # TODO: test me
     """
     session_maker: SessionMaker = SessionMaker
 
@@ -36,6 +35,7 @@ class Worker:
 
         Args:
             data (UserIn): user in data
+        # TODO: test me
         """
         try:
             result = await self.session_maker.post(settings.PL_URL, user_in)
@@ -49,13 +49,14 @@ class Worker:
             result = UserOut(userId=user_in.userId)
             fastapi_logger.debug(f'{result}')
 
-        await crud_data.set_field(self._uuid_id, self.db, result)
+        await crud_data.set_user_json(self._uuid_id, self.db, result)
 
     @timer
     async def run(self) -> None:
         """Run worker
+        # TODO: test me
         """
-        done = {'data_in': 0,'errors': 0, }
+        done = UsersStatus()
         to_process = []
         reader = csv.DictReader(self.data.splitlines())
 
@@ -65,10 +66,18 @@ class Worker:
                     asyncio.create_task(self.query_and_push(UserIn(**row)))
                         )
             except ValidationError:
-                done['errors'] += 1
-            done['data_in'] += 1
+                done.errors += 1
+            done.data_in += 1
 
         fastapi_logger.debug(f'{done}')
 
-        await crud_data.update_fields(self._uuid_id, self.db, done)
-        await asyncio.gather(*to_process)
+        await crud_data.create(self._uuid_id, self.db, done)
+        r = await asyncio.gather(*to_process)
+        await crud_data.update(
+            self._uuid_id,
+            self.db,
+            {
+                'data_out': len(r),
+                'result': ProcessingResult.DONE.value
+                    }
+                )

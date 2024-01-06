@@ -6,7 +6,6 @@ from app.config import settings
 
 class Blocker:
     """Block request after limit requests per period (in seconds)
-    # TODO: test me
     """
 
     def __init__(self, limit: int = settings.SEMAPHORE, period: float = 1.0):
@@ -17,6 +16,7 @@ class Blocker:
 
     async def sleep(self):
         """Sleep if time is gone
+        # TODO: test me
         """
         if len(self._finaly) >= self.limit:
             sleep_before = self._finaly.pop(0)
@@ -24,10 +24,11 @@ class Blocker:
 
             if sleep_before >= time.monotonic():
                 await asyncio.sleep(sleep_before - time.monotonic())
-                fastapi_logger.debug(f'sleep')
+                fastapi_logger.debug('Sleep')
 
     def __call__(self, func):
         """Decorator protocol
+        # TODO: test me
         """
         async def wrapper(*args, **kwargs):
 

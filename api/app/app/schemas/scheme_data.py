@@ -32,6 +32,7 @@ class UserIn(UserId):
                     }
                 }
 
+
 class UserOut(UserId):
     """Processed user
     """
@@ -75,20 +76,11 @@ class UsersStatus(BaseModel):
                 }
 
 
-class UsersOut(UsersStatus):
+class UsersOut(BaseModel):
     """All data processed
     """
 
-    class Config:
+    result: list[UserOut]
 
+    class Config:
         use_enum_values = True
-        extra = 'allow'
-        json_schema_extra = {
-            "example": {
-                'data_in': 12,
-                'data_out': 1,
-                'errors': 1,
-                'result': 'progress',
-                1: '',
-                    }
-                }

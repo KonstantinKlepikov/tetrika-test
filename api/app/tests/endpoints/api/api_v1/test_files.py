@@ -1,10 +1,6 @@
 import pytest
-import uuid
-from redis.asyncio import Redis
-from typing import Callable
 from httpx import AsyncClient
 from app.config import settings
-from app.core import uploades
 from tests.conftest import UUID_ID
 
 
@@ -28,7 +24,7 @@ class TestGetFile:
             ) -> None:
         """Mock upload file
         """
-        # TODO:
+        # TODO: mocke me
 
     @pytest.fixture(scope="function")
     def csv_file(self, tmp_path) -> bytes:

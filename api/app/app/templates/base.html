@@ -1,11 +1,73 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
 </head>
+
 <body>
+    <h1>Data converter.</h1>
     {% block content %}
     {% endblock content %}
+
+    <script>
+        function enableSubmit() {
+            document.getElementById('submitMe').removeAttribute("disabled");
+        }
+
+        const form = document.querySelector("#myForm");
+
+        async function sendData() {
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch("{{ path }}/file", {
+                    method: "POST",
+                    body: formData,
+                });
+                document.getElementById("formResponse").innerHTML = await response.text();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            sendData();
+        });
+
+        async function checkResult() {
+
+            var uuid_id = sessionStorage.getItem('uuid_id');
+
+            try {
+                const response = await fetch("{{ path }}/file/check?uuid_id="+uuid_id, {
+                    method: "GET",
+                    headers: {
+                        'accept': 'text/html'
+                    }
+                });
+                document.getElementById("checkResponse").innerHTML = await response.text();
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        function downloadFile(){
+
+            var uuid_id = sessionStorage.getItem('uuid_id');
+
+            const anchor = document.createElement("a");
+            anchor.href = "{{ path }}/file/download?uuid_id="+uuid_id;
+            anchor.download = "result.json";
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor)
+
+        };
+    </script>
 </body>
+
 </html>

@@ -1,11 +1,9 @@
-{% extends "base.html" %}
-{% block content %}
-    {% if done %}
-        <h1>File sent</h1>
-        <p>Operation id is: {{ uuid_id }}</p>
-        <p>Use POST /file/{id} to get result.</p>
-    {% else %}
-        <h1> Wrong file format - required .csv</h1>
-    {% endif %}
-    <input type="button" onclick="location.href='{{ path }}';" value="Back to form" />
-{% endblock content %}
+{% if done %}
+<h2>File sent.</h2>
+<p>Operation id is: {{ uuid_id }}. File processing in progress...</p>
+<h2>Check result.</h2>
+<button id="checkButton" onclick="sessionStorage.setItem('uuid_id', '{{ uuid_id }}'); checkResult();">Check</button>
+<div id="checkResponse"></div>
+{% else %}
+<h1> Wrong file format - required .csv</h1>
+{% endif %}

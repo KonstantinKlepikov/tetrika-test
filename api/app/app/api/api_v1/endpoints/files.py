@@ -5,11 +5,14 @@ from fastapi import (
     status,
     Request,
     Depends,
+    BackgroundTasks,
         )
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from app.core.uploades import upload_file
 from app.schemas.constraint import MultipartType
+from app.schemas.scheme_data import UsersOut
+from app.crud.redis_crud_base import crud_data
 from app.db.init_redis import get_redis_connection
 from app.core.workers import Worker
 from app.config import settings
@@ -28,10 +31,11 @@ templates = Jinja2Templates(directory="app/templates")
         )
 async def get_form(request: Request) -> HTMLResponse:
     """Web form html sender
+    # TODO: test me
     """
     return templates.TemplateResponse(
         "form_page.html",
-        {"request": request, "path": settings.API_V1+'/file'}
+        {"request": request, "path": settings.API_V1}
             )
 
 
@@ -43,24 +47,25 @@ async def get_form(request: Request) -> HTMLResponse:
         )
 async def get_file(
     request: Request,
+    background_tasks: BackgroundTasks,
     db: Redis = Depends(get_redis_connection),
     uuid_id: uuid.UUID = Depends(uuid.uuid4),
         ) -> HTMLResponse:
     """Receive one file
+    # TODO: test me
     """
     # upload files
     data = await upload_file(request)
     resp = {
         "request": request,
-        "path": settings.API_V1+'/file',
         "uuid_id": str(uuid_id),
-        'done': False if data.multipart_content_type \
-                != MultipartType.CSV.value else True,
+        'done': False if data.multipart_content_type
+        != MultipartType.CSV.value else True,
             }
 
     # work
     worker = Worker(uuid_id, db, data.value.decode("utf-8"))
-    await worker.run()
+    background_tasks.add_task(worker.run)
 
     # return result
     return templates.TemplateResponse(
@@ -68,3 +73,45 @@ async def get_file(
         resp,
         status_code=201
             )
+
+
+@router.get(
+    '/file/check',
+    status_code=status.HTTP_200_OK,
+    summary='Check file processing result',
+    responses=settings.ERRORS,
+    response_class=HTMLResponse,
+        )
+async def check_result(
+    request: Request,
+    uuid_id: str,
+    db: Redis = Depends(get_redis_connection)
+        ) -> HTMLResponse:
+    """Check file processing result
+    # TODO: test me
+    """
+    result = await crud_data.get_status(uuid_id, db)
+
+    return templates.TemplateResponse(
+        "check_result.html",
+        {
+            "request": request,
+            **result.model_dump(),
+                }
+            )
+
+
+@router.get(
+    '/file/download',
+    status_code=status.HTTP_200_OK,
+    summary='Get result json file',
+    responses=settings.ERRORS,
+        )
+async def getk_result(
+    uuid_id: str,
+    db: Redis = Depends(get_redis_connection)
+        ) -> UsersOut:
+    """Get result json file
+    # TODO: test me
+    """
+    return await crud_data.get_result(uuid_id, db)
