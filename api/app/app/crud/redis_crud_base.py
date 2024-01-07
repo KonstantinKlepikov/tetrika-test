@@ -1,4 +1,5 @@
 import json
+from json.decoder import JSONDecodeError
 from typing import TypeVar, Generic, Type
 from pydantic import BaseModel
 from redis.asyncio import Redis
@@ -55,14 +56,14 @@ class CRUDBase(Generic[SchemaDbType]):
         self,
         uuid_id: str,
         db: Redis,
-        obj_in: dict[str, int]
+        obj_in: dict[str, int | str]
             ) -> None:
         """Update document fields
 
         Args:
             uuid_id (str): uuid id
             db (Redis): db connection
-            obj_in (dict[str, int]): fields to update
+            obj_in (dict[str, int | str]): fields to update
         # TODO: test me
         """
         await db.hmset(uuid_id, obj_in)
@@ -100,7 +101,7 @@ class CRUDData(CRUDBase[UsersStatus]):
                 d = json.loads(i.decode('utf-8'))
                 if isinstance(d, dict):
                     data.append(UserOut(**d))
-            except:  # FIXME: add json loads exception
+            except JSONDecodeError:
                 pass
 
         return self.schema(result=data)

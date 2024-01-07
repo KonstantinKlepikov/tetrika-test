@@ -15,7 +15,7 @@ from app.config import settings
 class Worker:
     """Worker for parsing data
     """
-    session_maker: SessionMaker = SessionMaker
+    session_maker: type[SessionMaker] = SessionMaker
 
     def __init__(
         self,
@@ -38,7 +38,10 @@ class Worker:
         # TODO: test me
         """
         try:
-            result = await self.session_maker.post(settings.PL_URL, user_in)
+            result = await self.session_maker.post_user(
+                settings.PL_URL,
+                user_in
+                    )
             result = UserOut(
                 postId=result['id'],
                 result=ProcessingResult.DONE,

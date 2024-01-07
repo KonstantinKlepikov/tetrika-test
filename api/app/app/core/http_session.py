@@ -1,8 +1,54 @@
-from typing import Any
+import asyncio
+import time
+from typing import Any, Callable
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
+from fastapi.logger import logger as fastapi_logger
 from app.schemas.scheme_data import UserIn
-from app.util.blocker import Blocker
 from app.config import settings
+
+
+class Blocker:
+    """Block request after limit requests per period (in seconds)
+    """
+
+    def __init__(
+        self,
+        limit: int = settings.SEMAPHORE,
+        period: float = 1.0
+            ) -> None:
+        self.limit = limit
+        self.period = period
+        self._sem: asyncio.Semaphore = asyncio.Semaphore(limit)
+        self._finaly: list[float] = []
+
+    async def sleep(self) -> None:
+        """Sleep if time is gone
+        # TODO: test me
+        """
+        if len(self._finaly) >= self.limit:
+            sleep_before = self._finaly.pop(0)
+            fastapi_logger.debug(f'{sleep_before=}')
+
+            if sleep_before >= time.monotonic():
+                await asyncio.sleep(sleep_before - time.monotonic())
+                fastapi_logger.debug('Sleep')
+
+    def __call__(self, func: Callable) -> Callable:
+        """Decorator protocol
+        # TODO: test me
+        """
+        async def wrapper(*args, **kwargs):
+
+            async with self._sem:
+                fastapi_logger.debug(f'Sem value {self._sem._value}')
+
+                await self.sleep()
+                res = await func(*args, **kwargs)
+                self._finaly.append(time.monotonic() + self.period)
+
+            return res
+
+        return wrapper
 
 
 class SessionMaker:
@@ -40,26 +86,19 @@ class SessionMaker:
 
     @classmethod
     @blocker
-    async def post(
-        cls,
-        url: str,
-        data: UserIn | None = None
-            ) -> dict[str, Any]:
+    async def post_user(self, url: str, data: UserIn) -> dict[str, Any]:
         """Request and get responses
 
         Args:
             url (str): url for request
-            data (UserIn, optional): request body.
-                Defaults to None.
+            data (UserIn): request body.
 
         Returns:
             dict[str, Any]: response
         # TODO: test me
         """
-        client = cls.get_aiohttp_client()
-        if data:
-            data = data.model_dump()
-        async with client.post(url, data=data) as response:
+        client = self.get_aiohttp_client()
+        async with client.post(url, data=data.model_dump()) as response:
             if response.status == 429:
                 raise ConnectionRefusedError
             return await response.json()

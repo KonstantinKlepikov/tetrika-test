@@ -26,10 +26,10 @@ templates = Jinja2Templates(directory="app/templates")
     '/file',
     status_code=status.HTTP_200_OK,
     summary='Web form html sender',
-    responses=settings.ERRORS,
+    responses=settings.ERRORS,  # type: ignore
     response_class=HTMLResponse,
         )
-async def get_form(request: Request) -> HTMLResponse:
+async def get_form(request: Request):
     """Web form html sender
     # TODO: test me
     """
@@ -43,14 +43,14 @@ async def get_form(request: Request) -> HTMLResponse:
     '/file',
     status_code=status.HTTP_201_CREATED,
     summary='Receive one file',
-    responses=settings.ERRORS,
+    responses=settings.ERRORS,  # type: ignore
         )
 async def get_file(
     request: Request,
     background_tasks: BackgroundTasks,
     db: Redis = Depends(get_redis_connection),
     uuid_id: uuid.UUID = Depends(uuid.uuid4),
-        ) -> HTMLResponse:
+        ):
     """Receive one file
     # TODO: test me
     """
@@ -79,14 +79,14 @@ async def get_file(
     '/file/check',
     status_code=status.HTTP_200_OK,
     summary='Check file processing result',
-    responses=settings.ERRORS,
+    responses=settings.ERRORS,  # type: ignore
     response_class=HTMLResponse,
         )
 async def check_result(
     request: Request,
     uuid_id: str,
     db: Redis = Depends(get_redis_connection)
-        ) -> HTMLResponse:
+        ):
     """Check file processing result
     # TODO: test me
     """
@@ -105,7 +105,7 @@ async def check_result(
     '/file/download',
     status_code=status.HTTP_200_OK,
     summary='Get result json file',
-    responses=settings.ERRORS,
+    responses=settings.ERRORS,  # type: ignore
         )
 async def getk_result(
     uuid_id: str,

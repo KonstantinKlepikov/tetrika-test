@@ -1,6 +1,6 @@
 import functools
 import time
-from typing import Callable, Any
+from typing import Callable, Coroutine, Any
 from fastapi.logger import logger as fastapi_logger
 
 
@@ -9,7 +9,7 @@ def timer(func: Callable) -> Callable:
     # TODO: test me
     """
     @functools.wraps(func)
-    async def wrapper(*args, **kwargs) -> Any:
+    async def wrapper(*args, **kwargs) -> Coroutine[Any, None, None]:
 
         fastapi_logger.debug(f'Dtarting {func} with args {args} {kwargs}')
         start = time.time()

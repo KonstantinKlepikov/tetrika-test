@@ -1,4 +1,4 @@
-from typing import Generator, Any
+from typing import AsyncGenerator, Any
 from redis.asyncio import Redis
 from fastapi.logger import logger as flog
 from app.config import settings
@@ -19,7 +19,7 @@ class RedisConnection:
         await self.db.close()
 
 
-async def get_redis_connection() -> Generator[Redis, None, None]:
+async def get_redis_connection() -> AsyncGenerator[Redis, None]:
     """Get redis session
     """
     async with RedisConnection() as db:
