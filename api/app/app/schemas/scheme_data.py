@@ -71,7 +71,7 @@ class UsersStatus(BaseModel):
                 'data_in': 12,
                 'data_out': 0,
                 'errors': 0,
-                'result': 'progress',
+                'result': 'process',
                     }
                 }
 

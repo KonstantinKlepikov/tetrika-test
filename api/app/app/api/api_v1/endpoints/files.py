@@ -25,13 +25,12 @@ templates = Jinja2Templates(directory="app/templates")
 @router.get(
     '/file',
     status_code=status.HTTP_200_OK,
-    summary='Web form html sender',
+    summary='Send web',
     responses=settings.ERRORS,  # type: ignore
     response_class=HTMLResponse,
         )
-async def get_form(request: Request):
-    """Web form html sender
-    # TODO: test me
+async def form(request: Request):
+    """Send web
     """
     return templates.TemplateResponse(
         "form_page.html",
@@ -42,17 +41,16 @@ async def get_form(request: Request):
 @router.post(
     '/file',
     status_code=status.HTTP_201_CREATED,
-    summary='Receive one file',
+    summary='Upload one file',
     responses=settings.ERRORS,  # type: ignore
         )
-async def get_file(
+async def upload(
     request: Request,
     background_tasks: BackgroundTasks,
     db: Redis = Depends(get_redis_connection),
     uuid_id: uuid.UUID = Depends(uuid.uuid4),
         ):
-    """Receive one file
-    # TODO: test me
+    """Upload one file
     """
     # upload files
     data = await upload_file(request)
@@ -82,7 +80,7 @@ async def get_file(
     responses=settings.ERRORS,  # type: ignore
     response_class=HTMLResponse,
         )
-async def check_result(
+async def check(
     request: Request,
     uuid_id: str,
     db: Redis = Depends(get_redis_connection)
@@ -107,7 +105,7 @@ async def check_result(
     summary='Get result json file',
     responses=settings.ERRORS,  # type: ignore
         )
-async def getk_result(
+async def download(
     uuid_id: str,
     db: Redis = Depends(get_redis_connection)
         ) -> UsersOut:
